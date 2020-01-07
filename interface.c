@@ -1,13 +1,8 @@
 //интерфейс программы и всё,что связанно с ncurses
-
-#include <ncurses.h>
-#include <string.h>
-#include <stdlib.h>
+#include "interface.h"
+#include "opensave.h"
 
 WINDOW *win;
-
-static int row=0;
-static int col=0;
 
 char isnumber(int num)
 {
@@ -39,7 +34,7 @@ char interface()
 }
 
 //обработчик цветов ncurses
-void refresh_color(int **matrix)
+void refresh_color(int **matrix,short col,short row)
 {
 	for(short i=0;i<col;++i)
 	{
@@ -71,21 +66,20 @@ void refresh_color(int **matrix)
 }
 
 //очистка матрицы для клавиши space
-void clean_matrix(int **matrix)
+void clean_matrix(int **matrix,short col,short row)
 {
 	for(short i=1;i<col-1;++i)
 	{
 		for(short j=1;j<row-1;++j)
 			matrix[i][j]=48;
 	}
-	refresh_color(matrix);
+	refresh_color(matrix,col,row);
 	fullrefresh();
 }
 
 //управление
-int motion(int **matrix)
+char motion(int **matrix,short col,short row)
 {
-	clean_matrix(matrix);
 	fullrefresh();
 	int x=1;
 	int y=1;
@@ -100,20 +94,22 @@ int motion(int **matrix)
 			case KEY_DOWN:if((y+1)<row-1)++y;wmove(win,y,x);fullrefresh();break;
 			case KEY_LEFT:if((x-1)>0)--x;wmove(win,y,x);fullrefresh();break;
 			case KEY_RIGHT:if((x+1)<col-1)++x;wmove(win,y,x);fullrefresh();break;
-			case 32:clean_matrix(matrix);break;
+			case 32:clean_matrix(matrix,col,row);break;
+			case 'm':output_matrix(matrix,col,row);fullrefresh();break;
+			case 's':output_shell(matrix,col,row);fullrefresh();break;
 			case 'q':return 0;
 			default:
 				if(isnumber(ch))
 				{
 					matrix[x][y]=ch;
-					refresh_color(matrix);
+					refresh_color(matrix,col,row);
 				}
 		}
 	}
 }
 
 //вывод управления и кодов цветов
-void show_interface()
+void show_interface(short col)
 {
 	for(int i=0;i<16;++i)
 	{
@@ -132,10 +128,12 @@ void show_interface()
 	mvprintw(2,col+11,"SPACE -clear all colors");
 	mvprintw(3,col+11,"ARROWS-move the cursor");
 	mvprintw(5,col+11,"q-quit programm");
+	mvprintw(7,col+11,"m-inport in matrix");
+	mvprintw(9,col+11,"s-inport in shell");
 	refresh();
 }
 
-void quit_interface(int **matrix)
+void quit_interface(int **matrix,short col)
 {
 	for(char i=0;i<col;++i)
 		free(matrix[i]);
@@ -144,21 +142,21 @@ void quit_interface(int **matrix)
 }
 
 //проверка размера выбранного юзера
-//если размер превышает окна терминала-подстраивает максимальный
-void check_size(short x,short y)
+//если размер превышает окно терминала-подстраивает максимальный
+void check_size(short x,short y,short *col,short *row)
 {
 	short xMax,yMax;
 	getmaxyx(stdscr,yMax,xMax);
 	if(x>(xMax-35))
-		col=xMax-35;
+		*col=xMax-35;
 	else
-		col=x;
+		*col=x;
 	if(y>yMax-2)
-		row=yMax-2;
+		*row=yMax-2;
 	else
-		row=y;
+		*row=y;
 
-	win=newwin(row,col,1,1);
+	win=newwin(*row,*col,1,1);
 	box(win,0,0);
 	fullrefresh();
 }

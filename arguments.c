@@ -1,13 +1,14 @@
 //Функции для работы и обработки аргументов программы
+#include "arguments.h"
 
-#include <unistd.h>
-#include <stdlib.h>
-
-const char *starg="hvs:";
+const char *starg="hvs:m:";
 
 void print_help()
 {
-	printf("\t   [ \e[1;32mHelp Menu\e[0m ]\n\n\t\e[1;35mPowered by D21nkMaster\e[0m\n\n -s <XxY>\t----\t\tSet size X and Y (32x32;16x16)\n -h\t\t----\t\tPrint this menu\n -v\t\t----\t\tPrint version\n");
+	printf(
+	"\t   [ \e[1;32mHelp Menu\e[0m ]\n\n\t\e[1;35mPowered by D21nkMaster\e[0m\n\n -s <XxY>\t----\t\tSet size X and Y (32x32;16x16)\n"
+	" -m <name>\t----\t\tOpen save matrix\n"
+	" -h\t\t----\t\tPrint this menu\n -v\t\t----\t\tPrint version\n");
 	exit(0);
 }
 
@@ -68,16 +69,18 @@ void getnumbers(short *x,short *y,char *arg)
 }
 
 //обработчик аргументов
-void start_args(short *x,short *y,int argc,char **argv)
+short start_args(short *x,short *y,int argc,char **argv,char *open_name)
 {
+	short choose=0;
 	int ch=0;
 	while((ch=getopt(argc,argv,starg))!=-1)
 	{
 		switch(ch)
 		{
 			case 's':getnumbers(x,y,optarg);break;
+			case 'm':choose=1;sprintf(open_name,"%s",optarg);break;
 			case 'h':print_help();break;
-			case 'v':printf("Terminal Painter version 0.1 OpenBeta\n");exit(0);break;
+			case 'v':printf("Terminal Painter version 0.21 OpenBeta\n");exit(0);break;
 			default:
 				printf("Wrong option!\n");
 				print_help();
@@ -85,4 +88,5 @@ void start_args(short *x,short *y,int argc,char **argv)
 	}
 	argv+=optind;
 	argc-=optind;
+	return choose;
 }
