@@ -2,26 +2,25 @@
 =====================
 ![logo](https://i.ibb.co/L8Zxp2k/screen103.jpg)
 ***
-Программа позволяет рисовать в терминале линукса с помощью цветных пробелов(как на лого) при поддержке библиотеки ncurses.
-С возможностью вывода как в **матрицу** так и в **shell-код**.
+The programm lets draw in a linux terminal with color spaces. After draw you can export in **matrix** and in **shell-code**.
 
-Для сборки используйте утилиту make со следующими аргументами:
+For build you can use tool make with arguments:
 
-build ---- сборка проекта
+build ---- build the project
 
-debug ---- сборка проекта для дебага
+debug ---- build the project with debag
 
-clean ---- удаление сборочных файлов
+clean ---- delete temp files
 
-help  ---- справка
+help  ---- help menu
 
-***Справка по использованию tpaint***
+***Help for use tpaint***
 -----------------------------------
 
--s <XxY>  ---- задать размер холста X на Y(32x32; 16x16)
+-s <XxY>  ---- give a canvas's size X to Y(32x32; 16x16)
 
--m <name> ---- загрузить сохранённую матрицу
+-m <name> ---- load saved matrix
 
--h        ---- справка
+-h        ---- help menu
 
--v        ---- версия
+-v        ---- version
